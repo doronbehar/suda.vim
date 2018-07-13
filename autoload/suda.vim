@@ -15,7 +15,8 @@ function! suda#init(...) abort
 endfunction
 
 function! suda#system(cmd, ...) abort
-  let sudo_needs_a_password = system('sudo -v -n')
+  let sudo_validation = system('sudo -v -n')
+  let sudo_needs_a_password = v:shell_error
   let cmd = printf('sudo -p '''' -n %s', a:cmd)
   if &verbose
     echomsg '[suda]' cmd
@@ -27,7 +28,7 @@ function! suda#system(cmd, ...) abort
   try
     call inputsave()
     redraw
-    if !sudo_needs_a_password
+    if sudo_needs_a_password ==# 1
       let password = inputsecret('Password: ')
     else
       let password = ''
@@ -35,7 +36,7 @@ function! suda#system(cmd, ...) abort
   finally
     call inputrestore()
   endtry
-  if !sudo_needs_a_password
+  if sudo_needs_a_password ==# 1
     let cmd = printf('sudo -p '''' -S %s', a:cmd)
   else
     let cmd = printf('sudo -p '''' -n %s', a:cmd)
