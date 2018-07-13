@@ -38,7 +38,7 @@ function! suda#system(cmd, ...) abort
   if !sudo_needs_a_password
     let cmd = printf('sudo -p '''' -S %s', a:cmd)
   else
-    let cmd = printf('sudo -p '''' -n %s')
+    let cmd = printf('sudo -p '''' -n %s', a:cmd)
   end
   return system(cmd, password . "\n" . (a:0 ? a:1 : ''))
 endfunction
